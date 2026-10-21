@@ -1,0 +1,249 @@
+<div class="income-container">
+
+  <!-- Toast Notification -->
+  <div
+    *ngIf="toastMessage"
+    class="toast-alert"
+    [ngClass]="toastType === 'success' ? 'toast-success' : 'toast-error'">
+    <span>{{ toastType === 'success' ? '✓' : '⚠️' }}</span>
+    <span>{{ toastMessage }}</span>
+  </div>
+
+  <!-- Page Header -->
+  <header class="income-header">
+    <div>
+      <div class="page-badge">💵 REVENUE & INFLOW</div>
+      <h1 class="page-title">Income Management</h1>
+      <p class="page-subtitle">Track, categorize, and organize your revenue streams and cash receipts with ease.</p>
+    </div>
+
+    <div class="header-stat-card">
+      <span class="stat-label">Total Recorded Income</span>
+      <span class="stat-val">+ Rs. {{ totalIncome | number:'1.2-2' }}</span>
+    </div>
+  </header>
+
+  <!-- Summary Cards Row (Matches Expense Layout) -->
+  <section class="income-metrics-row">
+    <div class="inc-metric-card">
+      <div class="metric-top">
+        <span class="metric-icon-box">📅</span>
+        <span class="metric-label">This Month</span>
+      </div>
+      <div class="metric-number">Rs. {{ monthlyIncome | number:'1.2-2' }}</div>
+      <div class="metric-desc">Inflow recorded this calendar month</div>
+    </div>
+
+    <div class="inc-metric-card">
+      <div class="metric-top">
+        <span class="metric-icon-box">🏷️</span>
+        <span class="metric-label">Peak Source</span>
+      </div>
+      <div class="metric-number small-txt">{{ topCategory }}</div>
+      <div class="metric-desc">Highest overall earning category</div>
+    </div>
+
+    <div class="inc-metric-card">
+      <div class="metric-top">
+        <span class="metric-icon-box">📊</span>
+        <span class="metric-label">Total Logged</span>
+      </div>
+      <div class="metric-number">{{ incomes.length }} Entries</div>
+      <div class="metric-desc">Logged deposit transactions</div>
+    </div>
+  </section>
+
+  <!-- Main Grid: Form Left, History Right -->
+  <div class="income-main-grid">
+
+    <!-- ADD INCOME FORM CARD -->
+    <div class="form-card">
+      <div class="card-head">
+        <div class="card-icon-badge inc-badge">＋</div>
+        <div>
+          <h2 class="card-title">Add Income Entry</h2>
+          <p class="card-sub">Record a salary, client payment, or dividend</p>
+        </div>
+      </div>
+
+      <form (ngSubmit)="addIncome()" class="styled-form">
+        <!-- Amount -->
+        <div class="form-group">
+          <label class="form-label" for="amount">
+            Amount (Rs.) <span class="req">*</span>
+          </label>
+          <div class="input-prefix-box">
+            <span class="cur-prefix">Rs.</span>
+            <input
+              id="amount"
+              type="number"
+              name="amount"
+              min="1"
+              step="any"
+              [(ngModel)]="income.amount"
+              placeholder="0.00"
+              class="form-input with-prefix"
+              required
+            />
+          </div>
+        </div>
+
+        <!-- Category Dropdown & Quick Selector (Matches Expense Pattern) -->
+        <div class="form-group">
+          <label class="form-label" for="category">
+            Income Category <span class="req">*</span>
+          </label>
+          <select
+            id="category"
+            name="category"
+            [(ngModel)]="income.source"
+            class="form-select"
+            required>
+            <option *ngFor="let c of categories" [value]="c.name">
+              {{ c.icon }} {{ c.name }}
+            </option>
+          </select>
+
+          <!-- Quick Category Selector Buttons -->
+          <div class="quick-pill-row">
+            <button
+              type="button"
+              *ngFor="let c of categories"
+              (click)="setQuickCategory(c.name)"
+              [class.active-pill]="income.source === c.name"
+              class="quick-pill">
+              {{ c.icon }} {{ c.name }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Date -->
+        <div class="form-group">
+          <label class="form-label" for="date">Date <span class="req">*</span></label>
+          <input
+            id="date"
+            type="date"
+            name="date"
+            [(ngModel)]="income.date"
+            class="form-input"
+            required
+          />
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label class="form-label" for="description">Description / Notes (Optional)</label>
+          <textarea
+            id="description"
+            rows="3"
+            name="description"
+            [(ngModel)]="income.description"
+            placeholder="Client reference, invoice number, or deposit notes..."
+            class="form-textarea">
+          </textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          [disabled]="isSubmitting"
+          class="btn-submit-income">
+          <span *ngIf="!isSubmitting">＋ Save Income Record</span>
+          <span *ngIf="isSubmitting">Saving...</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- INCOME HISTORY LIST CARD (Matches Expense History Structure) -->
+    <div class="list-card">
+      <div class="list-card-head">
+        <div>
+          <h2 class="card-title">Income History</h2>
+          <p class="card-sub">All logged receipts ({{ filteredIncomes.length }} shown)</p>
+        </div>
+
+        <!-- Search Box -->
+        <div class="history-search-box">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            placeholder="Search income..."
+            [(ngModel)]="searchQuery"
+            class="search-input"
+          />
+        </div>
+      </div>
+
+      <!-- Category Filter Pills (Matches Expense Filter Strip) -->
+      <div class="filter-strip">
+        <button
+          class="filter-strip-btn"
+          [class.active]="selectedCategoryFilter === 'ALL'"
+          (click)="selectedCategoryFilter = 'ALL'">
+          All Sources
+        </button>
+        <button
+          *ngFor="let c of categories"
+          class="filter-strip-btn"
+          [class.active]="selectedCategoryFilter === c.name"
+          (click)="selectedCategoryFilter = c.name">
+          {{ c.icon }} {{ c.name }}
+        </button>
+      </div>
+
+      <!-- Scrollable List of Records -->
+      <div class="records-wrapper" *ngIf="filteredIncomes.length > 0; else emptyState">
+        <div class="income-record-item" *ngFor="let item of filteredIncomes">
+          <div class="rec-left">
+            <div class="rec-icon">{{ getCategoryIcon(item.source) }}</div>
+            <div class="rec-info">
+              <div class="rec-source">{{ item.source }}</div>
+              <div class="rec-desc">{{ item.description || 'No description provided' }}</div>
+            </div>
+          </div>
+
+          <div class="rec-mid">
+            <span class="rec-date">{{ item.date | date:'mediumDate' }}</span>
+          </div>
+
+          <div class="rec-right">
+            <span class="rec-amt">+ Rs. {{ item.amount | number:'1.2-2' }}</span>
+            <button
+              class="btn-delete-row"
+              (click)="confirmDelete(item)"
+              title="Delete this record">
+              🗑️
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #emptyState>
+        <div class="empty-list-box">
+          <span class="empty-emoji">💵</span>
+          <h3>No Income Records Found</h3>
+          <p>Try clearing your search query or add a new income record using the form on the left.</p>
+        </div>
+      </ng-template>
+    </div>
+
+  </div>
+
+  <!-- Delete Modal -->
+  <div class="modal-overlay" *ngIf="showDeleteModal">
+    <div class="modal-box">
+      <div class="modal-warn-icon">⚠️</div>
+      <h3 class="modal-title">Delete Income Record?</h3>
+      <p class="modal-desc">
+        Are you sure you want to delete
+        <strong>{{ itemToDelete?.source }}</strong> of
+        <strong>Rs. {{ itemToDelete?.amount | number:'1.2-2' }}</strong>?
+      </p>
+      <div class="modal-btns">
+        <button class="btn-cancel" (click)="cancelDelete()">Cancel</button>
+        <button class="btn-danger" (click)="executeDelete()">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,106 @@
+<!-- Mobile Header with Hamburger Trigger -->
+<div class="mobile-topbar">
+  <div class="mobile-brand">
+    <div class="logo-icon-sm">💰</div>
+    <span class="mobile-brand-title">FinNest</span>
+  </div>
+  <button class="mobile-menu-toggle" (click)="toggleMobileMenu()" aria-label="Toggle Navigation">
+    <span class="hamburger-bar"></span>
+    <span class="hamburger-bar"></span>
+    <span class="hamburger-bar"></span>
+  </button>
+</div>
+
+<!-- Backdrop for mobile drawer -->
+<div
+  class="sidebar-backdrop"
+  *ngIf="isMobileOpen"
+  (click)="closeMobileMenu()">
+</div>
+
+<aside class="sidebar" [class.mobile-open]="isMobileOpen">
+
+  <!-- Brand Logo -->
+  <a routerLink="/dashboard" (click)="closeMobileMenu()" class="logo" title="FinNest Expense Tracker">
+    <div class="logo-icon-box">
+      <span class="logo-emoji">💰</span>
+    </div>
+    <div class="logo-text">
+      <span class="logo-title">FinNest</span>
+      <span class="logo-subtitle">Wealth & Finance</span>
+    </div>
+  </a>
+
+  <!-- Navigation Menu -->
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Main Menu</div>
+
+    <!-- Dashboard -->
+    <a
+      routerLink="/dashboard"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      (click)="closeMobileMenu()"
+      class="nav-item">
+      <span class="nav-icon">📊</span>
+      <span class="nav-label">Dashboard</span>
+    </a>
+
+    <!-- Income -->
+    <a
+      routerLink="/income"
+      routerLinkActive="active"
+      (click)="closeMobileMenu()"
+      class="nav-item">
+      <span class="nav-icon">💵</span>
+      <span class="nav-label">Income</span>
+    </a>
+
+    <!-- Expenses -->
+    <a
+      routerLink="/expenses"
+      routerLinkActive="active"
+      (click)="closeMobileMenu()"
+      class="nav-item">
+      <span class="nav-icon">💳</span>
+      <span class="nav-label">Expenses</span>
+    </a>
+
+    <!-- Reports -->
+    <a
+      routerLink="/reports"
+      routerLinkActive="active"
+      (click)="closeMobileMenu()"
+      class="nav-item">
+      <span class="nav-icon">📈</span>
+      <span class="nav-label">Reports</span>
+    </a>
+  </nav>
+
+  <!-- Bottom User Card & Logout -->
+  <div class="sidebar-bottom" *ngIf="currentUser$ | async as user">
+    <a routerLink="/profile" (click)="closeMobileMenu()" class="user-card" title="Edit Profile">
+      <div class="user-avatar">
+        <img
+          *ngIf="isImagePic(user.profilePic)"
+          [src]="user.profilePic"
+          alt="Avatar"
+          class="sidebar-avatar-img"
+        />
+        <span *ngIf="!isImagePic(user.profilePic)">
+          {{ user.profilePic || '👤' }}
+        </span>
+      </div>
+      <div class="user-details">
+        <span class="user-name">{{ user.name }}</span>
+        <span class="user-plan">{{ user.email }}</span>
+      </div>
+    </a>
+
+    <button type="button" (click)="logout()" class="btn-logout" title="Sign out of account">
+      <span class="logout-icon">🚪</span>
+      <span class="logout-text">Logout</span>
+    </button>
+  </div>
+
+</aside>

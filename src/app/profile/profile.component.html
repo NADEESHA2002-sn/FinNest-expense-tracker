@@ -1,0 +1,648 @@
+<div class="profile-page">
+
+  <!-- Toast Notification -->
+  <div
+    *ngIf="toastMessage"
+    class="toast-alert"
+    [ngClass]="toastType === 'success' ? 'toast-success' : 'toast-error'">
+
+    <span class="toast-icon">
+      {{ toastType === 'success' ? '✓' : '⚠️' }}
+    </span>
+
+    <span class="toast-msg">
+      {{ toastMessage }}
+    </span>
+
+  </div>
+
+
+  <!-- ==========================================
+       PROFILE HEADER
+  =========================================== -->
+  <header class="executive-header">
+
+    <div class="header-user-info">
+
+      <!-- Profile Avatar -->
+      <div class="header-avatar-circle">
+
+        <img
+          *ngIf="isImagePic(profilePic)"
+          [src]="profilePic"
+          alt="User Profile"
+          class="header-avatar-img"
+        />
+
+        <span
+          *ngIf="!isImagePic(profilePic)"
+          class="header-avatar-emoji">
+          {{ profilePic }}
+        </span>
+
+      </div>
+
+
+      <!-- User Information -->
+      <div class="header-text-group">
+
+        <div class="header-badges-row">
+
+          <span class="brand-chip">
+            FinNest Member
+          </span>
+
+          <span class="status-chip">
+            ✓ Verified Account
+          </span>
+
+        </div>
+
+        <h1 class="user-display-name">
+          {{ name || 'FinNest User' }}
+        </h1>
+
+        <p class="user-email-text">
+          {{ email }}
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- Member Since -->
+    <div class="header-meta-card">
+
+      <span class="meta-label">
+        Member Since
+      </span>
+
+      <span class="meta-val">
+        {{ (currentUser?.createdAt | date:'mediumDate') || '2026' }}
+      </span>
+
+    </div>
+
+  </header>
+
+
+
+  <!-- ==========================================
+       MAIN PROFILE CONTENT
+  =========================================== -->
+  <div class="profile-layout-grid">
+
+
+    <!-- ========================================
+         LEFT COLUMN
+    ========================================= -->
+    <div class="grid-left-col">
+
+
+      <!-- ======================================
+           PROFILE PICTURE CARD
+      ======================================= -->
+      <div class="pro-card profile-picture-card">
+
+        <div class="card-header">
+
+          <div class="card-icon-box">
+            📸
+          </div>
+
+          <div>
+            <h2 class="card-title">
+              Profile Picture
+            </h2>
+
+            <p class="card-subtitle">
+              Personalize your FinNest account
+            </p>
+          </div>
+
+        </div>
+
+
+        <!-- Avatar Manager -->
+        <div class="avatar-manager">
+
+          <div class="avatar-preview-circle">
+
+            <img
+              *ngIf="isImagePic(profilePic)"
+              [src]="profilePic"
+              alt="Avatar Preview"
+              class="avatar-preview-img"
+            />
+
+            <span
+              *ngIf="!isImagePic(profilePic)"
+              class="avatar-preview-emoji">
+              {{ profilePic }}
+            </span>
+
+          </div>
+
+
+          <div class="avatar-actions">
+
+            <!-- Hidden File Input -->
+            <input
+              #fileInput
+              type="file"
+              accept="image/png, image/jpeg, image/webp"
+              (change)="onFileSelected($event)"
+              style="display: none;"
+            />
+
+
+            <!-- Upload -->
+            <button
+              type="button"
+              (click)="fileInput.click()"
+              [disabled]="isOptimizingPhoto"
+              class="btn-outline-upload">
+
+              <span>📁</span>
+              {{ isOptimizingPhoto ? 'Optimizing...' : 'Upload Photo' }}
+
+            </button>
+
+
+            <!-- Reset -->
+            <button
+              *ngIf="isImagePic(profilePic)"
+              type="button"
+              (click)="removePhoto()"
+              class="btn-outline-remove">
+
+              <span>✕</span>
+              Reset
+
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- Preset Avatars -->
+        <div class="preset-avatars-box">
+
+          <span class="preset-heading">
+            Choose an avatar
+          </span>
+
+
+          <div class="preset-grid">
+
+            <button
+              type="button"
+              *ngFor="let av of presetAvatars"
+              (click)="selectPresetAvatar(av)"
+              [class.active-avatar]="profilePic === av"
+              class="preset-avatar-btn">
+
+              {{ av }}
+
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- Image Hint -->
+        <div class="avatar-hint">
+
+          <span>💡</span>
+
+          <span>
+            Square images around 400×400 work best.
+          </span>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ======================================
+           ACCOUNT SECURITY CARD
+      ======================================= -->
+      <div class="pro-card security-card">
+
+        <div class="card-header">
+
+          <div class="card-icon-box security-icon">
+            🛡️
+          </div>
+
+          <div>
+
+            <h2 class="card-title">
+              Account Security
+            </h2>
+
+            <p class="card-subtitle">
+              Your account information
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="security-items">
+
+
+          <!-- Account Security -->
+          <div class="security-row">
+
+            <div class="security-label-wrapper">
+
+              <span class="security-dot green"></span>
+
+              <span class="sec-label">
+                Account Security
+              </span>
+
+            </div>
+
+            <span class="sec-status-chip">
+              ✓ Active
+            </span>
+
+          </div>
+
+
+          <!-- Data Privacy -->
+          <div class="security-row">
+
+            <span class="sec-label">
+              Data Privacy
+            </span>
+
+            <span class="sec-val">
+              Protected
+            </span>
+
+          </div>
+
+
+          <!-- Database -->
+          <div class="security-row">
+
+            <span class="sec-label">
+              Database
+            </span>
+
+            <span class="sec-val">
+              FinNest Cloud
+            </span>
+
+          </div>
+
+
+          <!-- Email -->
+          <div class="security-row">
+
+            <span class="sec-label">
+              Primary Email
+            </span>
+
+            <span class="sec-val sec-email">
+              {{ email }}
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- ========================================
+         RIGHT COLUMN
+    ========================================= -->
+    <div class="grid-right-col">
+
+      <div class="pro-card settings-card">
+
+
+        <!-- Settings Header -->
+        <div class="card-header">
+
+          <div class="card-icon-box form-icon">
+            ⚙️
+          </div>
+
+          <div>
+
+            <h2 class="card-title">
+              Personal & Financial Settings
+            </h2>
+
+            <p class="card-subtitle">
+              Manage your account preferences and financial targets
+            </p>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- ====================================
+             PROFILE FORM
+        ===================================== -->
+        <form
+          (ngSubmit)="onSaveProfile()"
+          class="pro-form"
+          novalidate>
+
+
+          <!-- ==================================
+               NAME + EMAIL
+          =================================== -->
+          <div class="form-row-2">
+
+
+            <!-- Full Name -->
+            <div class="form-group">
+
+              <label
+                class="form-label"
+                for="profName">
+
+                Full Name
+                <span class="required-star">*</span>
+
+              </label>
+
+
+              <div class="input-wrap">
+
+                <span class="input-icon">
+                  👤
+                </span>
+
+                <input
+                  id="profName"
+                  type="text"
+                  name="name"
+                  [(ngModel)]="name"
+                  placeholder="Your full name"
+                  class="pro-input"
+                  required
+                />
+
+              </div>
+
+            </div>
+
+
+
+            <!-- Email -->
+            <div class="form-group">
+
+              <div class="label-row">
+
+                <label
+                  class="form-label"
+                  for="profEmail">
+
+                  Email Address
+
+                </label>
+
+                <span class="verified-tag">
+                  🔒 Verified
+                </span>
+
+              </div>
+
+
+              <div class="input-wrap">
+
+                <span class="input-icon">
+                  ✉️
+                </span>
+
+                <input
+                  id="profEmail"
+                  type="email"
+                  name="email"
+                  [value]="email"
+                  disabled
+                  class="pro-input disabled-input"
+                />
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+
+          <!-- ==================================
+               PHONE + CURRENCY
+          =================================== -->
+          <div class="form-row-2">
+
+
+            <!-- Phone -->
+            <div class="form-group">
+
+              <label
+                class="form-label"
+                for="profPhone">
+
+                Phone Number
+
+              </label>
+
+
+              <div class="input-wrap">
+
+                <span class="input-icon">
+                  📱
+                </span>
+
+                <input
+                  id="profPhone"
+                  type="tel"
+                  name="phone"
+                  [(ngModel)]="phone"
+                  placeholder="+94 77 123 4567"
+                  class="pro-input"
+                />
+
+              </div>
+
+            </div>
+
+
+
+            <!-- Currency -->
+            <div class="form-group">
+
+              <label
+                class="form-label"
+                for="profCurrency">
+
+                Preferred Currency
+
+              </label>
+
+
+              <div class="input-wrap">
+
+                <span class="input-icon">
+                  💱
+                </span>
+
+                <select
+                  id="profCurrency"
+                  name="currency"
+                  [(ngModel)]="currency"
+                  class="pro-select">
+
+                  <option
+                    *ngFor="let c of currencies"
+                    [value]="c.code">
+
+                    {{ c.label }}
+
+                  </option>
+
+                </select>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+
+          <!-- ==================================
+               MONTHLY BUDGET
+          =================================== -->
+          <div class="form-group">
+
+            <label
+              class="form-label"
+              for="profBudget">
+
+              Monthly Spending Budget
+
+              <span class="currency-label">
+                ({{ currency }})
+              </span>
+
+            </label>
+
+
+            <div class="input-wrap">
+
+              <span class="cur-prefix">
+                {{ currency }}
+              </span>
+
+              <input
+                id="profBudget"
+                type="number"
+                name="monthlyBudget"
+                [(ngModel)]="monthlyBudget"
+                placeholder="100000"
+                class="pro-input with-prefix"
+              />
+
+            </div>
+
+
+            <span class="field-hint">
+
+              Set your preferred monthly spending limit to help
+              FinNest track your financial goals.
+
+            </span>
+
+          </div>
+
+
+
+          <!-- ==================================
+               FINANCIAL GOALS / BIO
+          =================================== -->
+          <div class="form-group">
+
+            <label
+              class="form-label"
+              for="profBio">
+
+              Financial Goals / Bio
+
+            </label>
+
+
+            <textarea
+              id="profBio"
+              rows="4"
+              name="bio"
+              [(ngModel)]="bio"
+              placeholder="Tell us about your financial goals..."
+              class="pro-textarea">
+            </textarea>
+
+          </div>
+
+
+
+          <!-- ==================================
+               SAVE BUTTON
+          =================================== -->
+          <div class="form-submit-row">
+
+            <button
+              type="submit"
+              [disabled]="isSavingProfile"
+              class="btn-save-pro">
+
+
+              <!-- Normal -->
+              <span *ngIf="!isSavingProfile">
+                💾 Save Changes
+              </span>
+
+
+              <!-- Loading -->
+              <span
+                *ngIf="isSavingProfile"
+                class="btn-loading">
+
+                <span class="spinner-ring"></span>
+
+                Saving changes...
+
+              </span>
+
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,410 @@
+<div class="home-page">
+
+  <!-- ==================== NAVBAR ==================== -->
+  <header class="navbar">
+    <div class="nav-container">
+
+      <!-- Brand -->
+      <a routerLink="/" class="logo" aria-label="FinNest Home">
+        <div class="logo-icon">💰</div>
+        <span class="brand-text">FinNest</span>
+      </a>
+
+      <!-- Navigation Links -->
+      <nav class="nav-links">
+        <a
+          href="#features"
+          (click)="scrollToSection('features'); $event.preventDefault()">
+          Features
+        </a>
+        <a
+          href="#how-it-works"
+          (click)="scrollToSection('how-it-works'); $event.preventDefault()">
+          How It Works
+        </a>
+        <a
+          href="#security"
+          (click)="scrollToSection('security'); $event.preventDefault()">
+          Security
+        </a>
+      </nav>
+
+      <!-- Auth Actions -->
+      <div class="nav-actions">
+        <a routerLink="/signin" class="login-btn">
+          Sign In
+        </a>
+        <a routerLink="/signup" class="signup-btn">
+          Get Started
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ==================== HERO SECTION ==================== -->
+  <main>
+    <section class="hero-section">
+      <!-- Ambient Glow Orbs -->
+      <div class="hero-glow-orb orb-left"></div>
+      <div class="hero-glow-orb orb-right"></div>
+
+      <div class="hero-container">
+
+        <!-- Hero Content -->
+        <div class="hero-content">
+
+          <div class="hero-badge">
+            <span class="badge-dot"></span>
+            <span>FinNest Finance 2.0 • Smart Personal Ledger</span>
+          </div>
+
+          <h1 class="hero-title">
+            Master your money with
+            <span class="gradient-text">complete clarity.</span>
+          </h1>
+
+          <p class="hero-description">
+            Track income, categorize expenses, monitor monthly budgets, and uncover meaningful financial trends — all in one clean, private, and organized workspace.
+          </p>
+
+          <div class="hero-actions">
+            <a routerLink="/signup" class="btn-hero-primary">
+              <span>Get Started</span>
+              <span class="arrow-icon">→</span>
+            </a>
+
+            <a routerLink="/signin" class="btn-hero-secondary">
+              Sign In to Account
+            </a>
+          </div>
+
+          <div class="hero-trust-row">
+            <div class="trust-item">
+              <span class="trust-check">✓</span>
+              <span>Bank-Grade Isolation</span>
+            </div>
+            <div class="trust-item">
+              <span class="trust-check">✓</span>
+              <span>Real-Time Cloud Sync</span>
+            </div>
+            <div class="trust-item">
+              <span class="trust-check">✓</span>
+              <span>Zero Clutter</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Hero Dashboard Mockup -->
+        <div class="hero-visual">
+
+          <div class="preview-dashboard-card">
+
+            <!-- Card Topbar -->
+            <div class="preview-card-header">
+              <div class="header-left">
+                <span class="preview-brand-dot"></span>
+                <span class="preview-brand-name">FinNest Overview</span>
+              </div>
+              <span class="preview-live-badge">
+                <span class="pulse-dot"></span> Live Sync
+              </span>
+            </div>
+
+            <!-- Net Balance Showcase -->
+            <div class="preview-balance-card">
+              <div class="balance-meta">
+                <span class="balance-label">Total Net Capital</span>
+                <h2 class="balance-val">Rs. 248,650.00</h2>
+                <span class="balance-trend">↑ +18.4% from last month</span>
+              </div>
+              <div class="balance-badge-icon">💰</div>
+            </div>
+
+            <!-- Inflow & Outflow Metrics -->
+            <div class="preview-metrics-row">
+              <div class="metric-pill pill-inflow">
+                <div class="pill-icon">↑</div>
+                <div class="pill-data">
+                  <span class="pill-label">Total Income</span>
+                  <strong class="pill-value">+Rs. 320,000</strong>
+                </div>
+              </div>
+
+              <div class="metric-pill pill-outflow">
+                <div class="pill-icon">↓</div>
+                <div class="pill-data">
+                  <span class="pill-label">Total Expenses</span>
+                  <strong class="pill-value">-Rs. 71,350</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- Monthly Budget Tracker -->
+            <div class="preview-budget-box">
+              <div class="budget-header">
+                <span class="budget-label">Monthly Budget Status</span>
+                <span class="budget-amount">Rs. 71,350 / Rs. 150,000</span>
+              </div>
+              <div class="budget-progress-track">
+                <div class="budget-progress-fill" style="width: 47%;"></div>
+              </div>
+              <div class="budget-footer">
+                <span class="budget-note">47% used • <strong>Rs. 78,650 surplus</strong> remaining</span>
+                <span class="budget-status-tag">On Track</span>
+              </div>
+            </div>
+
+            <!-- Visual Graph Curve Representation -->
+            <div class="preview-chart-box">
+              <div class="chart-header">
+                <span class="chart-title">Cashflow Activity</span>
+                <span class="chart-growth">+24.5% Savings Rate</span>
+              </div>
+              <div class="chart-bars-wrap">
+                <div class="chart-bar-group">
+                  <div class="chart-bar" style="height: 40%;"></div>
+                  <span>Jan</span>
+                </div>
+                <div class="chart-bar-group">
+                  <div class="chart-bar" style="height: 55%;"></div>
+                  <span>Feb</span>
+                </div>
+                <div class="chart-bar-group">
+                  <div class="chart-bar" style="height: 48%;"></div>
+                  <span>Mar</span>
+                </div>
+                <div class="chart-bar-group">
+                  <div class="chart-bar" style="height: 70%;"></div>
+                  <span>Apr</span>
+                </div>
+                <div class="chart-bar-group">
+                  <div class="chart-bar" style="height: 65%;"></div>
+                  <span>May</span>
+                </div>
+                <div class="chart-bar-group">
+                  <div class="chart-bar active" style="height: 85%;"></div>
+                  <span>Jun</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Floating Notification Pills -->
+          <div class="floating-pill pill-left">
+            <div class="float-icon green">✓</div>
+            <div class="float-text">
+              <strong>Salary Inflow</strong>
+              <span>+Rs. 150,000 added</span>
+            </div>
+          </div>
+
+          <div class="floating-pill pill-right">
+            <div class="float-icon blue">📈</div>
+            <div class="float-text">
+              <strong>Savings Target</strong>
+              <span>Ahead of schedule</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== FEATURES SECTION ==================== -->
+    <section class="features-section" id="features">
+      <div class="section-container">
+
+        <div class="section-heading">
+          <span class="section-badge">POWERFUL CAPABILITIES</span>
+          <h2 class="section-title">
+            Everything you need to
+            <span class="gradient-text">manage your wealth.</span>
+          </h2>
+          <p class="section-sub">
+            FinNest combines everyday transaction recording with high-level financial intelligence in one frictionless platform.
+          </p>
+        </div>
+
+        <div class="features-grid">
+
+          <!-- Feature 1 -->
+          <div class="feature-card">
+            <div class="feature-icon-wrapper icon-green">💵</div>
+            <h3 class="feature-title">Income Tracking</h3>
+            <p class="feature-desc">
+              Record salaries, business revenue, freelance payouts, and investment earnings with detailed source tagging.
+            </p>
+          </div>
+
+          <!-- Feature 2 -->
+          <div class="feature-card">
+            <div class="feature-icon-wrapper icon-red">💳</div>
+            <h3 class="feature-title">Expense Breakdown</h3>
+            <p class="feature-desc">
+              Log expenditures by category such as food, transport, bills, and lifestyle to pinpoint where your money goes.
+            </p>
+          </div>
+
+          <!-- Feature 3 -->
+          <div class="feature-card">
+            <div class="feature-icon-wrapper icon-blue">🎯</div>
+            <h3 class="feature-title">Smart Budgeting</h3>
+            <p class="feature-desc">
+              Define monthly budget goals and monitor your live progress with real-time remaining surplus indicators.
+            </p>
+          </div>
+
+          <!-- Feature 4 -->
+          <div class="feature-card">
+            <div class="feature-icon-wrapper icon-purple">📊</div>
+            <h3 class="feature-title">Visual Reports</h3>
+            <p class="feature-desc">
+              Analyze month-by-month and annual performance statements through high-contrast interactive bar charts.
+            </p>
+          </div>
+
+          <!-- Feature 5 -->
+          <div class="feature-card">
+            <div class="feature-icon-wrapper icon-amber">📥</div>
+            <h3 class="feature-title">CSV & PDF Statements</h3>
+            <p class="feature-desc">
+              Export itemized financial transactions into Excel-compatible CSV files or printable PDF statements at any time.
+            </p>
+          </div>
+
+          <!-- Feature 6 -->
+          <div class="feature-card" id="security">
+            <div class="feature-icon-wrapper icon-cyan">🛡️</div>
+            <h3 class="feature-title">Privacy & Isolation</h3>
+            <p class="feature-desc">
+              Every single transaction is cryptographically isolated to your unique user account. Nobody else can access your data.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== HOW IT WORKS ==================== -->
+    <section class="how-section" id="how-it-works">
+      <div class="section-container">
+
+        <div class="section-heading">
+          <span class="section-badge">SIMPLE WORKFLOW</span>
+          <h2 class="section-title">
+            Get started in
+            <span class="gradient-text">three simple steps.</span>
+          </h2>
+          <p class="section-sub">
+            No complicated banking integrations or steep learning curves. Just straightforward financial empowerment.
+          </p>
+        </div>
+
+        <div class="steps-grid">
+
+          <div class="step-card">
+            <div class="step-badge">01</div>
+            <div class="step-icon">👤</div>
+            <h3 class="step-title">Create Your Account</h3>
+            <p class="step-desc">
+              Register your FinNest account in seconds with your name, email, and preferred currency.
+            </p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-badge">02</div>
+            <div class="step-icon">📝</div>
+            <h3 class="step-title">Log Transactions</h3>
+            <p class="step-desc">
+              Add your daily expenses and income streams with intuitive categories and customizable descriptions.
+            </p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-badge">03</div>
+            <div class="step-icon">🚀</div>
+            <h3 class="step-title">Grow Your Wealth</h3>
+            <p class="step-desc">
+              Monitor your savings rate, adhere to your monthly budget, and make informed financial decisions.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== CTA BANNER ==================== -->
+    <section class="cta-section">
+      <div class="cta-container">
+        <div class="cta-card">
+          <div class="cta-glow"></div>
+          <span class="cta-tag">GET STARTED WITH FINNEST</span>
+          <h2 class="cta-headline">
+            Take full command of your finances today.
+          </h2>
+          <p class="cta-sub">
+            Join FinNest now and start building consistent, organized money habits with total confidence.
+          </p>
+          <a routerLink="/signup" class="btn-cta">
+            <span>Create Your Account</span>
+            <span class="arrow-icon">→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="footer">
+    <div class="footer-container">
+
+      <div class="footer-brand-col">
+        <a routerLink="/" class="footer-logo">
+          <div class="logo-icon-sm">💰</div>
+          <span>FinNest</span>
+        </a>
+        <p class="footer-desc">
+          Modern personal finance and expense tracking designed for clarity, speed, and privacy.
+        </p>
+        <span class="footer-secure-chip">🔒 256-bit Encrypted Platform</span>
+      </div>
+
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <a href="#features" (click)="scrollToSection('features'); $event.preventDefault()">Features</a>
+        <a href="#how-it-works" (click)="scrollToSection('how-it-works'); $event.preventDefault()">How It Works</a>
+        <a href="#security" (click)="scrollToSection('security'); $event.preventDefault()">Security</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Account</h4>
+        <a routerLink="/signin">Sign In</a>
+        <a routerLink="/signup">Create Account</a>
+        <a routerLink="/forgot-password">Forgot Password</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Platform</h4>
+        <span>Real-time Sync</span>
+        <span>Itemized Reports</span>
+        <span>Multi-Currency Support</span>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-bottom-container">
+        <p>© 2026 FinNest. All rights reserved.</p>
+        <p>Built for smarter financial management.</p>
+      </div>
+    </div>
+  </footer>
+
+</div>

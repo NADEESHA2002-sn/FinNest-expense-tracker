@@ -1,0 +1,249 @@
+<div class="expense-container">
+
+  <!-- Toast Notification -->
+  <div
+    *ngIf="toastMessage"
+    class="toast-alert"
+    [ngClass]="toastType === 'success' ? 'toast-success' : 'toast-error'">
+    <span>{{ toastType === 'success' ? '✓' : '⚠️' }}</span>
+    <span>{{ toastMessage }}</span>
+  </div>
+
+  <!-- Page Header -->
+  <header class="expense-header">
+    <div>
+      <div class="page-badge">💳 OUTFLOW & SPENDING</div>
+      <h1 class="page-title">Expense Management</h1>
+      <p class="page-subtitle">Log, categorize, and control your day-to-day expenditures with ease.</p>
+    </div>
+
+    <div class="header-stat-card">
+      <span class="stat-label">Total Recorded Expenses</span>
+      <span class="stat-val">- Rs. {{ totalExpenses | number:'1.2-2' }}</span>
+    </div>
+  </header>
+
+  <!-- Summary Cards Row -->
+  <section class="expense-metrics-row">
+    <div class="exp-metric-card">
+      <div class="metric-top">
+        <span class="metric-icon-box">📅</span>
+        <span class="metric-label">This Month</span>
+      </div>
+      <div class="metric-number">Rs. {{ monthlyExpenses | number:'1.2-2' }}</div>
+      <div class="metric-desc">Outflow recorded this calendar month</div>
+    </div>
+
+    <div class="exp-metric-card">
+      <div class="metric-top">
+        <span class="metric-icon-box">🏷️</span>
+        <span class="metric-label">Peak Category</span>
+      </div>
+      <div class="metric-number small-txt">{{ topCategory }}</div>
+      <div class="metric-desc">Highest overall expenditure category</div>
+    </div>
+
+    <div class="exp-metric-card">
+      <div class="metric-top">
+        <span class="metric-icon-box">📊</span>
+        <span class="metric-label">Total Logged</span>
+      </div>
+      <div class="metric-number">{{ expenses.length }} Entries</div>
+      <div class="metric-desc">Logged payment transactions</div>
+    </div>
+  </section>
+
+  <!-- Main Grid: Form Left, History Right -->
+  <div class="expense-main-grid">
+
+    <!-- ADD EXPENSE FORM CARD -->
+    <div class="form-card">
+      <div class="card-head">
+        <div class="card-icon-badge exp-badge">＋</div>
+        <div>
+          <h2 class="card-title">Add Expense Entry</h2>
+          <p class="card-sub">Record a purchase or bill payment</p>
+        </div>
+      </div>
+
+      <form (ngSubmit)="addExpense()" class="styled-form">
+        <!-- Amount -->
+        <div class="form-group">
+          <label class="form-label" for="amount">
+            Amount (Rs.) <span class="req">*</span>
+          </label>
+          <div class="input-prefix-box">
+            <span class="cur-prefix">Rs.</span>
+            <input
+              id="amount"
+              type="number"
+              name="amount"
+              min="1"
+              step="any"
+              [(ngModel)]="expense.amount"
+              placeholder="0.00"
+              class="form-input with-prefix"
+              required
+            />
+          </div>
+        </div>
+
+        <!-- Category Dropdown & Quick Pills -->
+        <div class="form-group">
+          <label class="form-label" for="category">
+            Category <span class="req">*</span>
+          </label>
+          <select
+            id="category"
+            name="category"
+            [(ngModel)]="expense.category"
+            class="form-select"
+            required>
+            <option *ngFor="let c of categories" [value]="c.name">
+              {{ c.icon }} {{ c.name }}
+            </option>
+          </select>
+
+          <!-- Quick Category Selector Buttons -->
+          <div class="quick-pill-row">
+            <button
+              type="button"
+              *ngFor="let c of categories"
+              (click)="setQuickCategory(c.name)"
+              [class.active-pill]="expense.category === c.name"
+              class="quick-pill">
+              {{ c.icon }} {{ c.name }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Date -->
+        <div class="form-group">
+          <label class="form-label" for="date">Date <span class="req">*</span></label>
+          <input
+            id="date"
+            type="date"
+            name="date"
+            [(ngModel)]="expense.date"
+            class="form-input"
+            required
+          />
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label class="form-label" for="description">Description / Notes (Optional)</label>
+          <textarea
+            id="description"
+            rows="3"
+            name="description"
+            [(ngModel)]="expense.description"
+            placeholder="Item details, store name, or receipt note..."
+            class="form-textarea">
+          </textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          [disabled]="isSubmitting"
+          class="btn-submit-expense">
+          <span *ngIf="!isSubmitting">＋ Save Expense Record</span>
+          <span *ngIf="isSubmitting">Saving...</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- EXPENSE HISTORY LIST CARD -->
+    <div class="list-card">
+      <div class="list-card-head">
+        <div>
+          <h2 class="card-title">Expense History</h2>
+          <p class="card-sub">All logged purchases ({{ filteredExpenses.length }} shown)</p>
+        </div>
+
+        <!-- Search Box -->
+        <div class="history-search-box">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            placeholder="Search expenses..."
+            [(ngModel)]="searchQuery"
+            class="search-input"
+          />
+        </div>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="filter-strip">
+        <button
+          class="filter-strip-btn"
+          [class.active]="selectedCategoryFilter === 'ALL'"
+          (click)="selectedCategoryFilter = 'ALL'">
+          All Categories
+        </button>
+        <button
+          *ngFor="let c of categories"
+          class="filter-strip-btn"
+          [class.active]="selectedCategoryFilter === c.name"
+          (click)="selectedCategoryFilter = c.name">
+          {{ c.icon }} {{ c.name }}
+        </button>
+      </div>
+
+      <!-- Scrollable List of Records -->
+      <div class="records-wrapper" *ngIf="filteredExpenses.length > 0; else emptyState">
+        <div class="expense-record-item" *ngFor="let item of filteredExpenses">
+          <div class="rec-left">
+            <div class="rec-icon">{{ getCategoryIcon(item.category) }}</div>
+            <div class="rec-info">
+              <div class="rec-category">{{ item.category }}</div>
+              <div class="rec-desc">{{ item.description || 'No description provided' }}</div>
+            </div>
+          </div>
+
+          <div class="rec-mid">
+            <span class="rec-date">{{ item.date | date:'mediumDate' }}</span>
+          </div>
+
+          <div class="rec-right">
+            <span class="rec-amt">- Rs. {{ item.amount | number:'1.2-2' }}</span>
+            <button
+              class="btn-delete-row"
+              (click)="confirmDelete(item)"
+              title="Delete this expense">
+              🗑️
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #emptyState>
+        <div class="empty-list-box">
+          <span class="empty-emoji">💳</span>
+          <h3>No Expense Records Found</h3>
+          <p>Try clearing your search filters or add a new expense using the form on the left.</p>
+        </div>
+      </ng-template>
+    </div>
+
+  </div>
+
+  <!-- Delete Modal -->
+  <div class="modal-overlay" *ngIf="showDeleteModal">
+    <div class="modal-box">
+      <div class="modal-warn-icon">⚠️</div>
+      <h3 class="modal-title">Delete Expense Record?</h3>
+      <p class="modal-desc">
+        Are you sure you want to delete
+        <strong>{{ itemToDelete?.category }}</strong> of
+        <strong>Rs. {{ itemToDelete?.amount | number:'1.2-2' }}</strong>?
+      </p>
+      <div class="modal-btns">
+        <button class="btn-cancel" (click)="cancelDelete()">Cancel</button>
+        <button class="btn-danger" (click)="executeDelete()">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+
+</div>

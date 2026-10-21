@@ -1,0 +1,359 @@
+<div class="reports-page">
+
+  <!-- ==========================================
+       TOP HEADER & EXPORT CONTROLS
+  =========================================== -->
+  <header class="report-header">
+    <div class="header-info">
+      <div class="header-badge">
+        <span class="badge-icon">📊</span>
+        <span>FINNEST FINANCIAL INTELLIGENCE</span>
+      </div>
+      <h1 class="header-title">Financial Reports & Statements</h1>
+      <p class="header-subtitle">
+        Generate audit-ready itemized financial ledgers, visual categorical spending distributions, and multi-period cashflow analytics.
+      </p>
+    </div>
+
+    <!-- Export Action Buttons -->
+    <div class="header-actions">
+      <button (click)="exportCSV()" class="btn-action btn-csv" title="Download Excel-compatible CSV statement">
+        <span class="btn-icon">📥</span>
+        <span>Export CSV</span>
+      </button>
+      <button (click)="printReport()" class="btn-action btn-print" title="Print statement or save as PDF">
+        <span class="btn-icon">🖨️</span>
+        <span>Print / PDF</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       FILTER BAR & PERIOD SELECTOR
+  =========================================== -->
+  <section class="filter-card">
+    <div class="mode-tabs">
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="reportMode === 'monthly'"
+        (click)="setMode('monthly')">
+        <span>📅</span> Monthly Statement
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="reportMode === 'yearly'"
+        (click)="setMode('yearly')">
+        <span>📊</span> Annual Ledger
+      </button>
+    </div>
+
+    <div class="filter-controls-row">
+      <!-- Month Dropdown (visible in Monthly Mode) -->
+      <div class="selector-group" *ngIf="reportMode === 'monthly'">
+        <label for="monthSelect" class="selector-label">Statement Month</label>
+        <div class="select-wrap">
+          <select
+            id="monthSelect"
+            [(ngModel)]="selectedMonth"
+            (change)="onMonthChange()"
+            class="custom-select">
+            <option *ngFor="let m of months; let i = index" [value]="i">
+              {{ m }}
+            </option>
+          </select>
+          <span class="select-arrow">▾</span>
+        </div>
+      </div>
+
+      <!-- Year Dropdown -->
+      <div class="selector-group">
+        <label for="yearSelect" class="selector-label">Fiscal Year</label>
+        <div class="select-wrap">
+          <select
+            id="yearSelect"
+            [(ngModel)]="selectedYear"
+            (change)="onYearChange()"
+            class="custom-select">
+            <option *ngFor="let y of availableYears" [value]="y">
+              {{ y }}
+            </option>
+          </select>
+          <span class="select-arrow">▾</span>
+        </div>
+      </div>
+
+      <!-- Active Period Tag -->
+      <div class="period-status-pill">
+        <span class="period-dot"></span>
+        <div class="period-text">
+          <span class="period-label">Selected Statement Period</span>
+          <strong class="period-val">
+            {{ reportMode === 'monthly' ? months[selectedMonth] + ' ' + selectedYear : 'Full Year ' + selectedYear }}
+          </strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       KEY PERFORMANCE INDICATORS (KPIs)
+  =========================================== -->
+  <section class="kpi-grid">
+
+    <!-- Total Inflow -->
+    <div class="kpi-card income-kpi">
+      <div class="kpi-top">
+        <span class="kpi-icon-box">💵</span>
+        <span class="kpi-tag tag-inc">+ Inflow</span>
+      </div>
+      <div class="kpi-val text-green">+ Rs. {{ totalIncome | number:'1.2-2' }}</div>
+      <div class="kpi-sub">Total verified receipts & earnings</div>
+    </div>
+
+    <!-- Total Outflow -->
+    <div class="kpi-card expense-kpi">
+      <div class="kpi-top">
+        <span class="kpi-icon-box">💳</span>
+        <span class="kpi-tag tag-exp">- Outflow</span>
+      </div>
+      <div class="kpi-val text-red">- Rs. {{ totalExpenses | number:'1.2-2' }}</div>
+      <div class="kpi-sub">Total logged expenditures</div>
+    </div>
+
+    <!-- Net Surplus / Deficit -->
+    <div class="kpi-card savings-kpi">
+      <div class="kpi-top">
+        <span class="kpi-icon-box">💰</span>
+        <span class="kpi-tag" [ngClass]="netSavings >= 0 ? 'tag-surplus' : 'tag-deficit'">
+          {{ netSavings >= 0 ? 'Net Surplus' : 'Net Deficit' }}
+        </span>
+      </div>
+      <div
+        class="kpi-val"
+        [ngClass]="netSavings >= 0 ? 'text-positive' : 'text-negative'">
+        {{ netSavings >= 0 ? '+' : '' }} Rs. {{ netSavings | number:'1.2-2' }}
+      </div>
+      <div class="kpi-sub">
+        Savings Rate: <strong>{{ savingsRate }}%</strong> of total income
+      </div>
+    </div>
+
+    <!-- Peak Category -->
+    <div class="kpi-card stat-kpi">
+      <div class="kpi-top">
+        <span class="kpi-icon-box">⭐</span>
+        <span class="kpi-tag tag-peak">Peak Category</span>
+      </div>
+      <div class="kpi-val text-peak">{{ topCategory }}</div>
+      <div class="kpi-sub">
+        Single Largest Item: Rs. {{ largestExpense | number:'1.0-0' }}
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ==========================================
+       VISUAL ANALYTICS & CHARTS
+  =========================================== -->
+  <section class="visuals-section">
+
+    <!-- 12-MONTH CASHFLOW BREAKDOWN (In Yearly Mode) -->
+    <div class="analytics-card" *ngIf="reportMode === 'yearly'">
+      <div class="card-head-row">
+        <div>
+          <h2 class="card-heading">12-Month Cashflow Overview ({{ selectedYear }})</h2>
+          <p class="card-subtext">Monthly comparison of verified income against total expenditures</p>
+        </div>
+        <div class="chart-legend-box">
+          <span class="legend-chip"><span class="legend-dot inc-dot"></span> Income</span>
+          <span class="legend-chip"><span class="legend-dot exp-dot"></span> Expenses</span>
+        </div>
+      </div>
+
+      <!-- Bar Graph -->
+      <div class="yearly-chart-container">
+        <div class="bar-column" *ngFor="let item of yearlyBarData">
+          <div class="bar-pair-track">
+            <!-- Income Bar -->
+            <div
+              class="bar-item income-bar-fill"
+              [style.height.%]="item.incomeHeightPercent"
+              [title]="item.monthName + ' Income: Rs. ' + item.income">
+            </div>
+            <!-- Expense Bar -->
+            <div
+              class="bar-item expense-bar-fill"
+              [style.height.%]="item.expenseHeightPercent"
+              [title]="item.monthName + ' Expense: Rs. ' + item.expense">
+            </div>
+          </div>
+          <span class="month-label">{{ item.monthName }}</span>
+          <span class="month-amt" *ngIf="item.expense > 0 || item.income > 0">
+            Rs. {{ item.expense >= 1000 ? (item.expense / 1000 | number:'1.0-1') + 'k' : item.expense }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATEGORY BREAKDOWN BARS -->
+    <div class="analytics-card" [class.full-width]="reportMode === 'monthly'">
+      <div class="card-head-row">
+        <div>
+          <h2 class="card-heading">Expense Categories Distribution</h2>
+          <p class="card-subtext">
+            Categorical expenditure allocation for {{ reportMode === 'monthly' ? months[selectedMonth] + ' ' + selectedYear : 'Fiscal Year ' + selectedYear }}
+          </p>
+        </div>
+        <div class="active-cat-count">
+          {{ categorySummaries.length }} Active Categories
+        </div>
+      </div>
+
+      <!-- Category List -->
+      <div class="category-list" *ngIf="categorySummaries.length > 0; else noCatData">
+        <div class="category-item" *ngFor="let cat of categorySummaries">
+          <div class="category-item-header">
+            <div class="category-name-group">
+              <span class="category-icon-badge">{{ cat.icon }}</span>
+              <span class="category-name-text">{{ cat.name }}</span>
+            </div>
+            <div class="category-numbers">
+              <span class="category-total-amount">Rs. {{ cat.total | number:'1.2-2' }}</span>
+              <span class="category-pct-badge">{{ cat.percentage | number:'1.1-1' }}%</span>
+            </div>
+          </div>
+          <div class="category-progress-track">
+            <div class="category-progress-fill" [style.width.%]="cat.percentage"></div>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noCatData>
+        <div class="empty-state-box">
+          <span class="empty-emoji">📂</span>
+          <p class="empty-msg">No expense transactions recorded for this period.</p>
+        </div>
+      </ng-template>
+    </div>
+
+  </section>
+
+  <!-- ==========================================
+       ITEMIZED STATEMENT / TRANSACTIONS
+  =========================================== -->
+  <section class="statement-card">
+
+    <div class="statement-header">
+      <div>
+        <h2 class="statement-title">Itemized Financial Ledger</h2>
+        <p class="statement-subtitle">
+          Displaying {{ filteredTransactions.length }} verified entries for {{ reportMode === 'monthly' ? months[selectedMonth] + ' ' + selectedYear : selectedYear }}
+        </p>
+      </div>
+
+      <!-- Controls -->
+      <div class="statement-controls">
+        <!-- Search Input -->
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            placeholder="Search transactions..."
+            [(ngModel)]="searchQuery"
+            class="statement-search-input"
+          />
+        </div>
+
+        <!-- Filter Segment -->
+        <div class="filter-segment">
+          <button
+            type="button"
+            class="filter-pill-btn"
+            [class.active]="typeFilter === 'all'"
+            (click)="typeFilter = 'all'">
+            All
+          </button>
+          <button
+            type="button"
+            class="filter-pill-btn"
+            [class.active]="typeFilter === 'income'"
+            (click)="typeFilter = 'income'">
+            Income
+          </button>
+          <button
+            type="button"
+            class="filter-pill-btn"
+            [class.active]="typeFilter === 'expense'"
+            (click)="typeFilter = 'expense'">
+            Expense
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statement Table -->
+    <div class="table-responsive" *ngIf="filteredTransactions.length > 0; else noTrans">
+      <table class="statement-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Category / Source</th>
+            <th>Transaction Date</th>
+            <th>Description & Notes</th>
+            <th class="text-right">Amount (Rs.)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let t of filteredTransactions">
+            <td>
+              <span
+                class="type-pill"
+                [ngClass]="t.type === 'income' ? 'pill-income' : 'pill-expense'">
+                {{ t.type === 'income' ? '↑ Income' : '↓ Expense' }}
+              </span>
+            </td>
+            <td class="font-medium text-dark">{{ t.categoryOrSource }}</td>
+            <td class="text-muted">{{ t.date | date:'mediumDate' }}</td>
+            <td class="text-desc">{{ t.description || '—' }}</td>
+            <td
+              class="text-right font-bold"
+              [ngClass]="t.type === 'income' ? 'amt-positive' : 'amt-negative'">
+              {{ t.type === 'income' ? '+' : '-' }} Rs. {{ t.amount | number:'1.2-2' }}
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr class="tfoot-row">
+            <td colspan="4" class="tfoot-label">
+              <strong>Net Statement Balance ({{ reportMode === 'monthly' ? months[selectedMonth] + ' ' + selectedYear : selectedYear }}):</strong>
+            </td>
+            <td class="text-right font-bold" [ngClass]="netSavings >= 0 ? 'amt-positive' : 'amt-negative'">
+              <strong>{{ netSavings >= 0 ? '+' : '' }} Rs. {{ netSavings | number:'1.2-2' }}</strong>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <ng-template #noTrans>
+      <div class="empty-state-box">
+        <span class="empty-emoji">📄</span>
+        <h3>No matching records found</h3>
+        <p>Try selecting another month or year, or adjust your search keywords.</p>
+      </div>
+    </ng-template>
+
+    <!-- Printable Official Stamp -->
+    <div class="print-only print-footer">
+      <hr />
+      <div class="print-meta-row">
+        <span>Official Statement generated via FinNest Wealth & Finance Tracker</span>
+        <span>Fiscal Period: {{ selectedYear }}</span>
+      </div>
+    </div>
+
+  </section>
+
+</div>

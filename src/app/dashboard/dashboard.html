@@ -1,0 +1,476 @@
+<div class="dashboard-wrapper">
+
+  <!-- ==============================================
+       TOAST NOTIFICATION
+  ============================================== -->
+  <div
+    *ngIf="toastMessage"
+    class="dashboard-toast"
+    [ngClass]="toastType === 'success' ? 'toast-success' : 'toast-error'">
+    <span class="toast-icon">{{ toastType === 'success' ? '✓' : '⚠️' }}</span>
+    <span class="toast-text">{{ toastMessage }}</span>
+  </div>
+
+  <!-- ==============================================
+       TOP BLUE HERO BANNER
+  ============================================== -->
+  <header class="dash-hero-banner">
+    <div class="hero-titles">
+      <div class="badge-tag">
+        <span class="pulse-dot"></span>
+        FINANCIAL INTELLIGENCE
+      </div>
+      <h1 class="welcome-heading">Welcome back, {{ userName }} 👋</h1>
+      <p class="welcome-sub">
+        Real-time financial pulse for <strong>{{ months[selectedMonth] }} {{ selectedYear }}</strong>. Track cash inflows, manage expenditures, and build wealth.
+      </p>
+    </div>
+
+    <div class="hero-actions-right">
+      <div class="active-badge">
+        <span>📅</span>
+        <span>{{ months[selectedMonth] }} {{ selectedYear }}</span>
+      </div>
+      <a routerLink="/reports" class="btn-hero-report" title="Generate Financial Reports">
+        <span class="btn-icon">📈</span> Generate Reports
+      </a>
+    </div>
+  </header>
+
+  <!-- ==============================================
+       MONTH & YEAR SELECTOR BAR
+  ============================================== -->
+  <section class="month-bar">
+    <div class="month-nav-left">
+      <span class="month-bar-title">Active Timeline:</span>
+      <div class="month-stepper">
+        <button (click)="prevMonth()" class="stepper-btn" title="Previous Month">‹</button>
+        <span class="current-month-display">
+          {{ months[selectedMonth] }} {{ selectedYear }}
+        </span>
+        <button (click)="nextMonth()" class="stepper-btn" title="Next Month">›</button>
+      </div>
+
+      <button
+        type="button"
+        (click)="resetToCurrentMonth()"
+        class="btn-today-chip"
+        title="Jump to current calendar month">
+        Current Month
+      </button>
+    </div>
+
+    <div class="month-nav-right">
+      <div class="dropdown-wrapper">
+        <label for="dashMonthSelect">Month</label>
+        <select
+          id="dashMonthSelect"
+          [(ngModel)]="selectedMonth"
+          (change)="onMonthOrYearChange()"
+          class="dash-select">
+          <option *ngFor="let m of months; let i = index" [value]="i">
+            {{ m }}
+          </option>
+        </select>
+      </div>
+
+      <div class="dropdown-wrapper">
+        <label for="dashYearSelect">Year</label>
+        <select
+          id="dashYearSelect"
+          [(ngModel)]="selectedYear"
+          (change)="onMonthOrYearChange()"
+          class="dash-select">
+          <option *ngFor="let y of availableYears" [value]="y">
+            {{ y }}
+          </option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==============================================
+       TOP 4 KPI METRICS ROW
+  ============================================== -->
+  <section class="metrics-grid">
+    <!-- 1. Monthly Net Balance -->
+    <div class="metric-card balance-metric">
+      <div class="card-head">
+        <div class="icon-avatar bal-avatar">💰</div>
+        <span class="metric-tag" [ngClass]="monthlyBalance >= 0 ? 'tag-positive' : 'tag-negative'">
+          {{ monthlyBalance >= 0 ? 'Monthly Surplus' : 'Monthly Deficit' }}
+        </span>
+      </div>
+      <div class="metric-body">
+        <div
+          class="metric-amount"
+          [ngClass]="monthlyBalance >= 0 ? 'text-positive' : 'text-negative'">
+          Rs. {{ monthlyBalance | number:'1.2-2' }}
+        </div>
+        <div class="metric-detail">
+          <span>Net Cash Flow (Inflow − Outflow)</span>
+        </div>
+      </div>
+      <div class="metric-footer-note">
+        {{ monthlyBalance >= 0 ? '✓ Positive savings balance' : '⚠️ Expenses exceeded income this month' }}
+      </div>
+    </div>
+
+    <!-- 2. Monthly Inflow (Income) -->
+    <div class="metric-card income-metric">
+      <div class="card-head">
+        <div class="icon-avatar inc-avatar">↑</div>
+        <span class="metric-tag tag-blue">Monthly Inflow</span>
+      </div>
+      <div class="metric-body">
+        <div class="metric-amount text-green">
+          + Rs. {{ monthlyIncome | number:'1.2-2' }}
+        </div>
+        <div class="metric-detail">
+          <span>{{ activeMonthIncomeCount }} income streams recorded</span>
+        </div>
+      </div>
+      <div class="metric-footer-note">All revenue deposited in {{ months[selectedMonth] }}</div>
+    </div>
+
+    <!-- 3. Monthly Outflow (Expenses) -->
+    <div class="metric-card expense-metric">
+      <div class="card-head">
+        <div class="icon-avatar exp-avatar">↓</div>
+        <span class="metric-tag tag-red">Monthly Outflow</span>
+      </div>
+      <div class="metric-body">
+        <div class="metric-amount text-red">
+          - Rs. {{ monthlyExpenses | number:'1.2-2' }}
+        </div>
+        <div class="metric-detail">
+          <span>{{ activeMonthExpenseCount }} expense entries logged</span>
+        </div>
+      </div>
+      <div class="metric-footer-note">All spending recorded in {{ months[selectedMonth] }}</div>
+    </div>
+
+    <!-- 4. Savings Rate -->
+    <div class="metric-card savings-metric">
+      <div class="card-head">
+        <div class="icon-avatar sav-avatar">%</div>
+        <span class="metric-tag tag-purple">Savings Rate</span>
+      </div>
+      <div class="metric-body">
+        <div class="metric-amount text-primary">
+          {{ monthlySavingsRate }}%
+        </div>
+        <div class="metric-detail">
+          <span>Retained of monthly inflow</span>
+        </div>
+      </div>
+      <div class="metric-footer-note">
+        {{ monthlySavingsRate >= 20 ? '🎉 Excellent savings discipline!' : '💡 Keep tracking expenses to optimize' }}
+      </div>
+    </div>
+  </section>
+
+  <!-- ==============================================
+       ANALYTICS & CHARTS SECTION
+  ============================================== -->
+  <section class="analytics-row">
+
+    <!-- 12-Month Expense Trend Bar Graph -->
+    <div class="analytics-card trend-card">
+      <div class="card-header-flex">
+        <div>
+          <span class="card-kicker">ANNUAL TIMELINE</span>
+          <h2 class="card-main-title">12-Month Expense Trend ({{ selectedYear }})</h2>
+          <p class="card-sub-title">Monthly spending fluctuation across the year</p>
+        </div>
+        <div class="trend-badge">
+          Year {{ selectedYear }}
+        </div>
+      </div>
+
+      <!-- Trend Bars -->
+      <div class="trend-chart-container">
+        <div
+          class="trend-col"
+          *ngFor="let t of monthlyTrends"
+          [class.active-col]="t.isCurrent"
+          (click)="selectedMonth = t.monthIndex; onMonthOrYearChange()"
+          [title]="t.monthName + ': Rs. ' + t.amount">
+          <div class="bar-shell">
+            <div
+              class="trend-bar-fill"
+              [style.height.%]="t.heightPercentage"
+              [class.highlight-fill]="t.isCurrent">
+            </div>
+          </div>
+          <span class="col-month">{{ t.monthName }}</span>
+          <span class="col-cost" *ngIf="t.amount > 0">
+            {{ t.amount >= 1000 ? (t.amount / 1000 | number:'1.0-0') + 'k' : t.amount }}
+          </span>
+        </div>
+      </div>
+
+      <div class="chart-caption">
+        <span>💡 Click any month column to instantly inspect that month</span>
+      </div>
+    </div>
+
+    <!-- Cashflow Comparison Bar Chart -->
+    <div class="analytics-card flow-card">
+      <div class="card-header-flex">
+        <div>
+          <span class="card-kicker">CASHFLOW BALANCE</span>
+          <h2 class="card-main-title">Income vs Expenses</h2>
+          <p class="card-sub-title">{{ months[selectedMonth] }} {{ selectedYear }}</p>
+        </div>
+      </div>
+
+      <div class="flow-bars-container" *ngIf="monthlyIncome > 0 || monthlyExpenses > 0; else emptyFlow">
+        <!-- Income Column -->
+        <div class="flow-col">
+          <div class="flow-val inc-text">Rs. {{ monthlyIncome | number:'1.0-0' }}</div>
+          <div class="bar-track">
+            <div class="bar-fill inc-fill" [style.height.%]="incomeBarHeight"></div>
+          </div>
+          <div class="flow-lbl">
+            <span class="lbl-dot inc-dot"></span> Inflow
+          </div>
+        </div>
+
+        <!-- Expense Column -->
+        <div class="flow-col">
+          <div class="flow-val exp-text">Rs. {{ monthlyExpenses | number:'1.0-0' }}</div>
+          <div class="bar-track">
+            <div class="bar-fill exp-fill" [style.height.%]="expenseBarHeight"></div>
+          </div>
+          <div class="flow-lbl">
+            <span class="lbl-dot exp-dot"></span> Outflow
+          </div>
+        </div>
+      </div>
+
+      <ng-template #emptyFlow>
+        <div class="empty-flow-box">
+          <span class="empty-icon">📊</span>
+          <p>No activity logged for {{ months[selectedMonth] }} {{ selectedYear }}</p>
+        </div>
+      </ng-template>
+
+      <!-- Cashflow Distribution Bar -->
+      <div class="flow-dist-bar" *ngIf="monthlyIncome > 0 || monthlyExpenses > 0">
+        <div
+          class="dist-segment inc-seg"
+          [style.width.%]="(monthlyIncome / (monthlyIncome + monthlyExpenses)) * 100"
+          title="Income proportion">
+        </div>
+        <div
+          class="dist-segment exp-seg"
+          [style.width.%]="(monthlyExpenses / (monthlyIncome + monthlyExpenses)) * 100"
+          title="Expense proportion">
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ==============================================
+       UNIFIED MONTHLY ACTIVITY FEED (INCOMES & EXPENSES)
+  ============================================== -->
+  <section class="activity-feed-card">
+    <div class="feed-header-flex">
+      <div>
+        <div class="badge-tag">COMPLETE TIMELINE</div>
+        <h2 class="card-main-title">
+          Monthly Activity ({{ months[selectedMonth] }} {{ selectedYear }})
+        </h2>
+        <p class="card-sub-title">
+          Complete ledger of both income inflows and expense payments
+        </p>
+      </div>
+
+      <!-- Controls: Tabs & Search Box -->
+      <div class="feed-controls">
+        <!-- Filter Tabs -->
+        <div class="feed-tab-group">
+          <button
+            type="button"
+            (click)="setActivityTab('ALL')"
+            [class.active-tab]="activityTab === 'ALL'"
+            class="tab-btn">
+            All ({{ monthActivityList.length }})
+          </button>
+          <button
+            type="button"
+            (click)="setActivityTab('INCOME')"
+            [class.active-tab]="activityTab === 'INCOME'"
+            class="tab-btn tab-inc">
+            💵 Incomes ({{ activeMonthIncomeCount }})
+          </button>
+          <button
+            type="button"
+            (click)="setActivityTab('EXPENSE')"
+            [class.active-tab]="activityTab === 'EXPENSE'"
+            class="tab-btn tab-exp">
+            💳 Expenses ({{ activeMonthExpenseCount }})
+          </button>
+        </div>
+
+        <!-- Search Input -->
+        <div class="feed-search-box">
+          <span class="search-ico">🔍</span>
+          <input
+            type="text"
+            placeholder="Search this month..."
+            [(ngModel)]="activitySearchQuery"
+            class="feed-search-input"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Transactions List -->
+    <div class="activity-list-wrapper" *ngIf="filteredActivityList.length > 0; else noActivity">
+      <div
+        class="activity-row-item"
+        *ngFor="let item of filteredActivityList"
+        [ngClass]="item.type === 'income' ? 'row-income' : 'row-expense'">
+
+        <!-- Left: Icon & Title & Description -->
+        <div class="item-left">
+          <div
+            class="activity-icon-box"
+            [ngClass]="item.type === 'income' ? 'icon-box-in' : 'icon-box-out'">
+            {{ item.icon }}
+          </div>
+          <div class="item-meta">
+            <div class="item-title-row">
+              <span class="item-title">{{ item.title }}</span>
+              <span
+                class="type-pill"
+                [ngClass]="item.type === 'income' ? 'type-pill-in' : 'type-pill-out'">
+                {{ item.type === 'income' ? 'Inflow' : 'Outflow' }}
+              </span>
+            </div>
+            <div class="item-desc">
+              {{ item.description || 'No description note provided' }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Middle: Formatted Date -->
+        <div class="item-mid">
+          <span class="item-date">
+            {{ item.date | date:'mediumDate' }}
+          </span>
+        </div>
+
+        <!-- Right: Signed Amount & Delete -->
+        <div class="item-right">
+          <div
+            class="item-amount-val"
+            [ngClass]="item.type === 'income' ? 'amt-positive' : 'amt-negative'">
+            {{ item.type === 'income' ? '+' : '-' }} Rs. {{ item.amount | number:'1.2-2' }}
+          </div>
+          <button
+            class="btn-delete-row"
+            (click)="confirmDelete(item.id, item.type, item.title, item.amount)"
+            title="Delete transaction">
+            🗑️
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noActivity>
+      <div class="empty-feed-state">
+        <span class="empty-emoji">📑</span>
+        <h3>No activity found in {{ months[selectedMonth] }} {{ selectedYear }}</h3>
+        <p>
+          {{ activitySearchQuery ? 'No transactions match your search filter.' : 'You have not recorded any income or expenses for this month.' }}
+        </p>
+        <div class="empty-feed-actions">
+          <a routerLink="/income" class="btn-feed-link link-inc">
+            + Manage Income Streams
+          </a>
+          <a routerLink="/expenses" class="btn-feed-link link-exp">
+            + Manage Expenses
+          </a>
+        </div>
+      </div>
+    </ng-template>
+  </section>
+
+  <!-- ==============================================
+       CATEGORY BREAKDOWN ROW
+  ============================================== -->
+  <section class="analytics-row">
+    <!-- Category Spending Breakdown -->
+    <div class="analytics-card category-breakdown-card full-width-card">
+      <div class="card-header-flex">
+        <div>
+          <span class="card-kicker">EXPENDITURE DISTRIBUTION</span>
+          <h2 class="card-main-title">Category Spending in {{ months[selectedMonth] }}</h2>
+          <p class="card-sub-title">Visual breakdown of where your funds were deployed</p>
+        </div>
+        <div class="trend-badge">
+          {{ expenseCategories.length }} Categories
+        </div>
+      </div>
+
+      <div class="categories-container" *ngIf="expenseCategories.length > 0; else noCategories">
+        <div class="cat-bar-row" *ngFor="let cat of expenseCategories">
+          <div class="cat-info-row">
+            <div class="cat-icon-name">
+              <span class="cat-emoji">{{ cat.icon }}</span>
+              <span class="cat-title">{{ cat.name }}</span>
+            </div>
+            <div class="cat-sums">
+              <strong>Rs. {{ cat.amount | number:'1.0-0' }}</strong>
+              <span class="cat-pct-label">{{ cat.percentage | number:'1.0-0' }}%</span>
+            </div>
+          </div>
+          <div class="cat-track">
+            <div
+              class="cat-fill"
+              [style.width.%]="cat.percentage"
+              [style.background-color]="cat.color">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noCategories>
+        <div class="empty-flow-box">
+          <span class="empty-icon">📁</span>
+          <p>No category spending to display for this month.</p>
+        </div>
+      </ng-template>
+    </div>
+  </section>
+
+  <!-- ==============================================
+       DELETE CONFIRMATION MODAL
+  ============================================== -->
+  <div class="modal-backdrop" *ngIf="showDeleteModal">
+    <div class="modal-dialog delete-dialog">
+      <div class="modal-icon-center">⚠️</div>
+      <h3 class="delete-heading">Delete Transaction?</h3>
+      <p class="delete-desc">
+        Are you sure you want to permanently delete
+        <strong>{{ itemToDelete?.title }}</strong>
+        for <strong>Rs. {{ itemToDelete?.amount | number:'1.2-2' }}</strong>?
+        This action will recalculate your net balance immediately.
+      </p>
+
+      <div class="modal-actions center-actions">
+        <button type="button" class="btn-cancel" (click)="cancelDelete()">
+          Cancel
+        </button>
+        <button type="button" class="btn-danger" (click)="executeDelete()">
+          Yes, Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

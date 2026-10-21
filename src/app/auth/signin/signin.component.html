@@ -1,0 +1,110 @@
+<div class="auth-page">
+  <div class="auth-card">
+
+    <!-- Header & Brand -->
+    <div class="auth-header">
+      <a routerLink="/" class="brand-logo" title="Back to Homepage">
+        <div class="logo-icon">💰</div>
+        <span class="logo-name">FinNest</span>
+      </a>
+
+      <h1 class="auth-title">Welcome Back</h1>
+      <p class="auth-subtitle">Sign in to access your personal financial dashboard</p>
+    </div>
+
+    <!-- Alert Notifications -->
+    <div *ngIf="errorMessage" class="auth-alert alert-error">
+      <span class="alert-icon">⚠️</span>
+      <span class="alert-text">{{ errorMessage }}</span>
+    </div>
+
+    <div *ngIf="successMessage" class="auth-alert alert-success">
+      <span class="alert-icon">✓</span>
+      <span class="alert-text">{{ successMessage }}</span>
+    </div>
+
+    <!-- Sign In Form -->
+    <form (ngSubmit)="onSubmit()" class="auth-form" novalidate>
+
+      <!-- Email Field -->
+      <div class="form-group">
+        <label for="signin-email" class="form-label">Email Address</label>
+        <div class="input-container">
+          <span class="field-icon">✉️</span>
+          <input
+            id="signin-email"
+            type="email"
+            name="email"
+            [(ngModel)]="email"
+            placeholder="name@example.com"
+            class="form-input"
+            required
+            autocomplete="email"
+            autofocus
+          />
+        </div>
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <div class="label-row">
+          <label for="signin-password" class="form-label">Password</label>
+          <a routerLink="/forgot-password" class="link-muted-small">Forgot password?</a>
+        </div>
+        <div class="input-container">
+          <span class="field-icon">🔒</span>
+          <input
+            id="signin-password"
+            [type]="showPassword ? 'text' : 'password'"
+            name="password"
+            [(ngModel)]="password"
+            placeholder="Enter your account password"
+            class="form-input"
+            required
+            autocomplete="current-password"
+          />
+          <button
+            type="button"
+            (click)="togglePasswordVisibility()"
+            class="btn-eye"
+            [title]="showPassword ? 'Hide password' : 'Show password'">
+            {{ showPassword ? '👁️' : '🙈' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Options Row -->
+      <div class="form-options">
+        <label class="checkbox-label">
+          <input type="checkbox" [(ngModel)]="rememberMe" name="rememberMe" />
+          <span>Remember this session</span>
+        </label>
+
+        <button type="button" (click)="useDemoAccount()" class="btn-demo" title="Fill demo credentials">
+          ⚡ Demo
+        </button>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" [disabled]="isSubmitting" class="btn-primary">
+        <span *ngIf="!isSubmitting">Sign In →</span>
+        <span *ngIf="isSubmitting" class="btn-loading">
+          <span class="spinner-ring"></span> Signing in...
+        </span>
+      </button>
+
+    </form>
+
+    <!-- Card Footer -->
+    <div class="auth-footer">
+      <p class="switch-text">
+        Don't have an account?
+        <a routerLink="/signup" class="link-primary">Sign up</a>
+      </p>
+      <div class="back-home-wrap">
+        <a routerLink="/" class="link-muted">← Return to Homepage</a>
+      </div>
+    </div>
+
+  </div>
+</div>

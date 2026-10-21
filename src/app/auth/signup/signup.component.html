@@ -1,0 +1,185 @@
+<div class="auth-page">
+  <div class="auth-card">
+
+    <!-- Header & Brand -->
+    <div class="auth-header">
+      <a routerLink="/" class="brand-logo" title="Back to Homepage">
+        <div class="logo-icon">💰</div>
+        <span class="logo-name">FinNest</span>
+      </a>
+
+      <h1 class="auth-title">Create Account</h1>
+      <p class="auth-subtitle">Sign up to start organizing and tracking your personal finances</p>
+    </div>
+
+    <!-- Alert Notifications -->
+    <div *ngIf="errorMessage" class="auth-alert alert-error">
+      <span class="alert-icon">⚠️</span>
+      <span class="alert-text">{{ errorMessage }}</span>
+    </div>
+
+    <div *ngIf="successMessage" class="auth-alert alert-success">
+      <span class="alert-icon">✓</span>
+      <span class="alert-text">{{ successMessage }}</span>
+    </div>
+
+    <!-- Sign Up Form -->
+    <form (ngSubmit)="onSubmit()" class="auth-form" novalidate>
+
+      <!-- Full Name -->
+      <div class="form-group">
+        <label for="signup-name" class="form-label">Full Name</label>
+        <div class="input-container">
+          <span class="field-icon">👤</span>
+          <input
+            id="signup-name"
+            type="text"
+            name="name"
+            [(ngModel)]="name"
+            placeholder="e.g. Nadeesha Perera"
+            class="form-input"
+            required
+            autocomplete="name"
+          />
+        </div>
+      </div>
+
+      <!-- Email Address -->
+      <div class="form-group">
+        <label for="signup-email" class="form-label">Email Address</label>
+        <div class="input-container">
+          <span class="field-icon">✉️</span>
+          <input
+            id="signup-email"
+            type="email"
+            name="email"
+            [(ngModel)]="email"
+            placeholder="name@example.com"
+            class="form-input"
+            required
+            autocomplete="email"
+          />
+        </div>
+      </div>
+
+      <!-- Phone Number (Optional) -->
+      <div class="form-group">
+        <label for="signup-phone" class="form-label">
+          Phone Number <span class="label-tag">(Optional)</span>
+        </label>
+        <div class="input-container">
+          <span class="field-icon">📱</span>
+          <input
+            id="signup-phone"
+            type="tel"
+            name="phone"
+            [(ngModel)]="phone"
+            placeholder="+94 77 123 4567"
+            class="form-input"
+            autocomplete="tel"
+          />
+        </div>
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <div class="label-row">
+          <label for="signup-password" class="form-label">Password</label>
+          <span
+            *ngIf="password"
+            class="strength-tag"
+            [style.color]="passwordStrength.color">
+            {{ passwordStrength.label }}
+          </span>
+        </div>
+        <div class="input-container">
+          <span class="field-icon">🔒</span>
+          <input
+            id="signup-password"
+            [type]="showPassword ? 'text' : 'password'"
+            name="password"
+            [(ngModel)]="password"
+            placeholder="At least 6 characters"
+            class="form-input"
+            required
+            autocomplete="new-password"
+          />
+          <button
+            type="button"
+            (click)="togglePasswordVisibility()"
+            class="btn-eye"
+            [title]="showPassword ? 'Hide password' : 'Show password'">
+            {{ showPassword ? '👁️' : '🙈' }}
+          </button>
+        </div>
+
+        <!-- Password Strength Meter -->
+        <div class="strength-meter" *ngIf="password">
+          <div
+            class="strength-segment"
+            [class.active]="passwordStrength.score >= 1"
+            [style.background-color]="passwordStrength.score >= 1 ? passwordStrength.color : ''"></div>
+          <div
+            class="strength-segment"
+            [class.active]="passwordStrength.score >= 2"
+            [style.background-color]="passwordStrength.score >= 2 ? passwordStrength.color : ''"></div>
+          <div
+            class="strength-segment"
+            [class.active]="passwordStrength.score >= 3"
+            [style.background-color]="passwordStrength.score >= 3 ? passwordStrength.color : ''"></div>
+          <div
+            class="strength-segment"
+            [class.active]="passwordStrength.score >= 4"
+            [style.background-color]="passwordStrength.score >= 4 ? passwordStrength.color : ''"></div>
+        </div>
+      </div>
+
+      <!-- Confirm Password Field -->
+      <div class="form-group">
+        <label for="signup-confirm" class="form-label">Confirm Password</label>
+        <div class="input-container">
+          <span class="field-icon">🛡️</span>
+          <input
+            id="signup-confirm"
+            [type]="showPassword ? 'text' : 'password'"
+            name="confirmPassword"
+            [(ngModel)]="confirmPassword"
+            placeholder="Re-enter your password"
+            class="form-input"
+            required
+            autocomplete="new-password"
+          />
+        </div>
+      </div>
+
+      <!-- Terms Checkbox -->
+      <div class="form-options">
+        <label class="checkbox-label">
+          <input type="checkbox" [(ngModel)]="agreeTerms" name="agreeTerms" />
+          <span>I agree to the Terms of Service and Privacy Policy</span>
+        </label>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" [disabled]="isSubmitting" class="btn-primary">
+        <span *ngIf="!isSubmitting">Create Account →</span>
+        <span *ngIf="isSubmitting" class="btn-loading">
+          <span class="spinner-ring"></span> Creating Account...
+        </span>
+      </button>
+
+    </form>
+
+    <!-- Card Footer -->
+    <div class="auth-footer">
+      <p class="switch-text">
+        Already have an account?
+        <a routerLink="/signin" class="link-primary">Sign in</a>
+      </p>
+      <div class="back-home-wrap">
+        <a routerLink="/" class="link-muted">← Return to Homepage</a>
+      </div>
+    </div>
+
+  </div>
+</div>

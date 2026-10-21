@@ -1,1 +1,117 @@
-/* You can add global styles to this file, and also import other style files */
+/* =========================================================
+   FINNEST - Modern Blue Design System & Global Styles
+   ========================================================= */
+
+:root {
+  /* Brand Primary Colors (Modern Vibrant Royal Blue) */
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-dark: #1e40af;
+  --primary-deep: #172554;
+  --primary-light: #eff6ff;
+  --primary-subtle: #dbeafe;
+  --primary-focus: rgba(37, 99, 235, 0.25);
+  --primary-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 60%, #1e40af 100%);
+  --primary-glow: 0 8px 24px -4px rgba(37, 99, 235, 0.4);
+
+  /* Cyan & Sky Blue Accents */
+  --accent-sky: #0284c7;
+  --accent-sky-light: #e0f2fe;
+  --accent-sky-border: #bae6fd;
+  --accent-indigo: #4f46e5;
+
+  /* Semantic Finance Colors */
+  --income-green: #10b981;
+  --income-green-dark: #059669;
+  --income-green-light: #ecfdf5;
+  --income-green-border: #a7f3d0;
+
+  --expense-red: #ef4444;
+  --expense-red-dark: #dc2626;
+  --expense-red-light: #fef2f2;
+  --expense-red-border: #fecaca;
+
+  --balance-blue: #2563eb;
+  --balance-blue-light: #eff6ff;
+
+  /* Neutral Backgrounds & Blue Tint Canvas */
+  --bg-page: #f1f5f9;
+  --bg-page-tint: #f0f6ff;
+  --bg-card: #ffffff;
+  --bg-card-blue: #f8faff;
+  --bg-subtle: #f8fafc;
+  --bg-sidebar: #0a1128; /* Deep Midnight Blue */
+  --bg-sidebar-hover: #132247;
+  --bg-sidebar-active: #2563eb;
+
+  /* Text Colors */
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-subtle: #94a3b8;
+  --text-blue: #1d4ed8;
+  --text-inverse: #ffffff;
+
+  /* Borders & Shadows */
+  --border-light: #e2e8f0;
+  --border-blue: #dbeafe;
+  --border-blue-hover: #bfdbfe;
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 12px -2px rgba(37, 99, 235, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 25px -4px rgba(37, 99, 235, 0.12), 0 4px 8px -2px rgba(0, 0, 0, 0.03);
+  --shadow-xl: 0 20px 30px -6px rgba(37, 99, 235, 0.16), 0 8px 12px -4px rgba(0, 0, 0, 0.04);
+
+  /* Border Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Font */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  min-height: 100%;
+  font-family: var(--font-family);
+  background-color: var(--bg-page-tint);
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Custom Scrollbars in clean blue tone */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3b82f6;
+}

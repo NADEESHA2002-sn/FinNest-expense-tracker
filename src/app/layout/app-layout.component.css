@@ -1,0 +1,25 @@
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  background-color: #f8fafc;
+  position: relative;
+}
+
+.main-content {
+  margin-left: 270px;
+  width: calc(100% - 270px);
+  min-height: 100vh;
+  background-color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left 0.25s ease, width 0.25s ease;
+  box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding-top: 60px; /* Account for fixed mobile header */
+  }
+}
